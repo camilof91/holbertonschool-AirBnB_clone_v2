@@ -2,7 +2,7 @@
 """Defines the BaseModel class."""
 import models
 from uuid import uuid4
-from datetime import datetime
+from datetime import datetime, timezone
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column
 from sqlalchemy import DateTime
@@ -21,8 +21,8 @@ class BaseModel:
     """
 
     id = Column(String(60), primary_key=True, nullable=False, unique=True)
-    created_at = Column(DateTime, nullable=False, default=datetime.UTC())
-    updated_at = Column(DateTime, nullable=False, default=datetime.UTC())
+    created_at = Column(DateTime, nullable=False, default=datetime.now(timezone.utc))
+    updated_at = Column(DateTime, nullable=False, default=datetime.now(timezone.utc))
 
     def __init__(self, *args, **kwargs):
         """Initialize a new BaseModel.
@@ -32,7 +32,8 @@ class BaseModel:
             **kwargs (dict): Key/value pairs of attributes.
         """
         self.id = str(uuid4())
-        self.created_at = self.updated_at = datetime.utcnow()
+        self.created_at = datetime.now(timezone.utc)
+        self.updated_at = None
         if kwargs:
             for key, value in kwargs.items():
                 if key == "created_at" or key == "updated_at":
@@ -42,7 +43,7 @@ class BaseModel:
 
     def save(self):
         """Update updated_at with the current datetime."""
-        self.updated_at = datetime.UTC()
+        self.updated_at = datetime.now(timezone.utc)
         models.storage.new(self)
         models.storage.save()
 
@@ -55,7 +56,7 @@ class BaseModel:
         my_dict = self.__dict__.copy()
         my_dict["__class__"] = str(type(self).__name__)
         my_dict["created_at"] = self.created_at.isoformat()
-        my_dict["updated_at"] = self.updated_at.isoformat()
+        my_dict["updated_at"] = self.updated_at.replace(tzinfo=timezone.utc).isoformat()
         my_dict.pop("_sa_instance_state", None)
         return my_dict
 
