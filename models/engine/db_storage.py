@@ -13,6 +13,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import relationship
 from sqlalchemy.orm import scoped_session
 from sqlalchemy.orm import sessionmaker
+from collections import defaultdict
 
 
 class DBStorage:
@@ -52,6 +53,12 @@ class DBStorage:
             objs.extend(self.__session.query(Place).all())
             objs.extend(self.__session.query(Review).all())
             objs.extend(self.__session.query(Amenity).all())
+            
+            place_reviews = defaultdict(list)
+            for review in self.__session.query(Review).all():
+                place_reviews[review.place_id].append(review)
+            for place in self.__session.query(Place).all():
+                place.reviews = place_reviews[place.id]
         else:
             if type(cls) == str:
                 cls = eval(cls)

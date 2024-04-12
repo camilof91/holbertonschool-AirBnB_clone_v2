@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """This module defines a class to manage file storage for hbnb clone"""
 import json
+from models.review import Review
 
 
 class FileStorage:
@@ -64,7 +65,12 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                        self.all()[key] = classes[val['__class__']](**val)
+                        if key.endswith('.reviews'):
+                            place_id = key.split('.')[0].split('.')[-1]
+                            place = FileStorage.__objects[f'Place.{place_id}']
+                            place.reviews = [classes[val['__class__']](**review) for review in val['reviews']]
+
+                FileStorage.__objects[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
             pass
 
@@ -77,3 +83,11 @@ class FileStorage:
             if self.__objects[key]:
                 del self.__objects[key]
                 self.save()
+                
+    def get_reviews(self, place_id):
+        """Returns a list of Review instances with place_id equal to the provided place_id"""
+        reviews = []
+        for obj in self.__objects.values():
+            if isinstance(obj, Review) and obj.place_id == place_id:
+                reviews.append(obj)
+        return reviews                
