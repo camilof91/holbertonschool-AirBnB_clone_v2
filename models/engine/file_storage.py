@@ -12,7 +12,7 @@ class FileStorage:
     # def all(self, cls=None):
     #     """Returns a dictionary of models currently in storage"""
     #     return FileStorage.__objects
-    
+
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
         if cls:
@@ -65,10 +65,12 @@ class FileStorage:
             with open(FileStorage.__file_path, 'r') as f:
                 temp = json.load(f)
                 for key, val in temp.items():
-                        if key.endswith('.reviews'):
-                            place_id = key.split('.')[0].split('.')[-1]
-                            place = FileStorage.__objects[f'Place.{place_id}']
-                            place.reviews = [classes[val['__class__']](**review) for review in val['reviews']]
+                    if key.endswith('.reviews'):
+                        place_id = key.split('.')[0].split('.')[-1]
+                        place = FileStorage.__objects[f'Place.{place_id}']
+                        place.reviews = [classes[val['__class__']]
+                                         (**review) for review
+                                         in val['reviews']]
 
                 FileStorage.__objects[key] = classes[val['__class__']](**val)
         except FileNotFoundError:
@@ -83,11 +85,12 @@ class FileStorage:
             if self.__objects[key]:
                 del self.__objects[key]
                 self.save()
-                
+
     def get_reviews(self, place_id):
-        """Returns a list of Review instances with place_id equal to the provided place_id"""
+        """Returns a list of Review instances with place_id
+        equal to the provided place_id"""
         reviews = []
         for obj in self.__objects.values():
             if isinstance(obj, Review) and obj.place_id == place_id:
                 reviews.append(obj)
-        return reviews                
+        return reviews
