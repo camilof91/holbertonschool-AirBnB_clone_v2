@@ -86,8 +86,6 @@ Usage: show <class_name> <_id>
 ```
 ```
 ###### Example 2: Create an object whit parameters
-```
-```
 Usage: create State name="California"
 ```
 (hbnb) show BaseModel 3aa5babc-efb6-4041-bfe9-3cc9727588f8
