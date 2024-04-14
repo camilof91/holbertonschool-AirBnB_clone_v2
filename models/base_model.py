@@ -31,21 +31,24 @@ class BaseModel:
             *args (any): Unused.
             **kwargs (dict): Key/value pairs of attributes.
         """
-        self.id = str(uuid4())
-        self.created_at = datetime.now(timezone.utc)
-        self.updated_at = None
+        self.id = kwargs.get('id', str(uuid.uuid4()))
+        self.created_at = kwargs.get('created_at', datetime.now())
+        self.updated_at = kwargs.get('updated_at', datetime.now())
+
         if kwargs:
             for key, value in kwargs.items():
-                if key == "created_at" or key == "updated_at":
-                    value = datetime.strptime(value, "%Y-%m-%dT%H:%M:%S.%f")
-                if key != "__class__":
+                if key in ['created_at', 'updated_at']:
+                    setattr(self, key, datetime.fromisoformat(value))
+                elif key != '__class__':
+                    # Everything will be added as an attribute except the class
                     setattr(self, key, value)
 
     def save(self):
         """Update updated_at with the current datetime."""
-        self.updated_at = datetime.now(timezone.utc)
-        models.storage.new(self)
-        models.storage.save()
+        from models import storage
+        self.updated_at = datetime.now()
+        storage.new(self)
+        storage.save()
 
     def to_dict(self):
         """Return a dictionary representation of the BaseModel instance.
@@ -53,12 +56,13 @@ class BaseModel:
         Includes the key/value pair __class__ representing
         the class name of the object.
         """
-        my_dict = self.__dict__.copy()
-        my_dict["__class__"] = str(type(self).__name__)
-        my_dict["created_at"] = self.created_at.isoformat()
-        my_dict["updated_at"] = self.updated_at.replace(tzinfo=timezone.utc).isoformat()
-        my_dict.pop("_sa_instance_state", None)
-        return my_dict
+        dictionary = {}
+        dictionary.update(self.__dict__)
+        dictionary["__class__"] = str(type(self).__name__)
+        dictionary['created_at'] = self.created_at.isoformat()
+        dictionary['updated_at'] = self.updated_at.isoformat()
+        dictionary.pop('_sa_instance_state', None)
+        return dictionary
 
     def delete(self):
         """Delete the current instance from storage."""
