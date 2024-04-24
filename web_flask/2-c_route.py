@@ -11,6 +11,7 @@ def hello_hbnb():
     """
     return "Hello HBNB"
 
+
 @app.route("/hbnb", strict_slashes=False)
 def hbnb():
     """
@@ -18,15 +19,18 @@ def hbnb():
     """
     return "HBNB"
 
+
 @app.route("/c/<text>", strict_slashes=False)
 def c_rute(text):
     """
-    This function handles URLs like /c/something, where <text> captures the value
-    after "/c/". It replaces underscores with spaces and returns "C " followed by
+    This function handles URLs like /c/something, where <text>
+    captures the value after "/c/". It replaces underscores
+    with spaces and returns "C " followed by
     the modified text.
     """
     text = text.replace("_", " ")
     return f"C {text}"
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
