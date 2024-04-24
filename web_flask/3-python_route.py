@@ -48,11 +48,8 @@ def num_rute(n):
     after "/python/". It replaces underscores with spaces and returns "C " followed by
     the modified text.
     """
-    try:
-        number = int(n)
-        return f"{number} is a number"
-    except ValueError:
-        return "Not a number", 400 
+    number = int(n)
+    return f"{number} is a number"
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
