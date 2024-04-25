@@ -1,4 +1,7 @@
 #!/usr/bin/python3
+"""
+taks file with a flask app
+"""
 from flask import Flask
 
 app = Flask(__name__)
@@ -33,7 +36,7 @@ def c_rute(text):
     return f"C {text}"
 
 
-# @app.route("/python/", strict_slashes=False)
+@app.route("/python/", strict_slashes=False)
 @app.route("/python/<text>", strict_slashes=False)
 def py_rute(text=None):
     """
