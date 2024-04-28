@@ -4,6 +4,7 @@ import json
 from models.review import Review
 
 
+
 class FileStorage:
     """This class manages storage of hbnb models in JSON format"""
     __file_path = 'file.json'
@@ -94,3 +95,11 @@ class FileStorage:
             if isinstance(obj, Review) and obj.place_id == place_id:
                 reviews.append(obj)
         return reviews
+    
+    def close(self):
+        """ methot Close added 7 ponint 
+        AirBnB clone - Web framework
+        """
+        self.reload()
+
+
