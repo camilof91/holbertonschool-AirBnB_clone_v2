@@ -87,9 +87,9 @@ def num_odd_template(n):
     with spaces and returns "C " followed by
     the modified text.
     """
-    state = ' is even' if (int(n) % 2 == 0) else ' is odd'
+    state = " is even" if (int(n) % 2 == 0) else " is odd"
     return render_template("6-number_odd_or_even.html", n=n, state=state)
-    
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)

@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Defines the State class."""
 import models
+from models.base_model import State
 from os import getenv
 from models.base_model import Base
 from models.base_model import BaseModel
@@ -8,6 +9,7 @@ from models.city import City
 from sqlalchemy import Column
 from sqlalchemy import String
 from sqlalchemy.orm import relationship
+
 
 
 class State(BaseModel, Base):
@@ -27,23 +29,17 @@ class State(BaseModel, Base):
 
     __tablename__ = "states"
     name = Column(String(128), nullable=False)
+    cities = relationship("City", backref="state", cascade="delete")
 
-    if storage == 'fs':
+    if getenv("HBNB_TYPE_STORAGE") != "db":
         @property
         def cities(self):
-            """return the cities of the current state"""
-            var = models.storage.all()
-            lista = []
-            result = []
-            for key in var:
-                city = key.replace('.', ' ')
-                city = shlex.split(city)
-                if (city[0] == 'City'):
-                    lista.append(var[key])
-            for elem in lista:
-                if (elem.state_id == self.id):
-                    result.append(elem)
-            return (result)
+            """Get a list of all related Cities."""
+            city_l = []
+            for city in list(models.storage.all(City).values()):
+                if city.state_id == self.id:
+                    city_l.append(city)
+            return city_l
 
     if storage == 'db':
         cities = relationship('City', backref='state', cascade='all, delete')

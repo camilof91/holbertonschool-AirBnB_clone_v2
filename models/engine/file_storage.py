@@ -101,5 +101,3 @@ class FileStorage:
         AirBnB clone - Web framework
         """
         self.reload()
-
-
